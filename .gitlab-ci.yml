@@ -345,7 +345,7 @@ deploy_review_b2c:
   script:
     - set -x
     - DEMO_SERVER_IP=$(dig ${DNS_SERVER} +short $DEMO_SERVER_NAME)
-    - export ICM_BASE_URL=$(sh e2e/get-icmbaseurl.sh)
+    - export ICM_BASE_URL=https://jpwademo.rnd.j.ad.intershop.net
     - ICM_HOST=$(expr match "$ICM_BASE_URL" '.*://\([^:]*\).*')
     - ICM_IP=$(dig ${DNS_SERVER} +short $ICM_HOST | tail -n 1)
     - PUBLISH_PWA=$(sh .gitlab-ci-get-publish.sh "${CI_COMMIT_REF_SLUG}-pwa-b2c")
@@ -357,10 +357,11 @@ deploy_review_b2c:
       $PUBLISH_PWA
       --name "${CI_COMMIT_REF_SLUG}-pwa-b2c"
       -e LOGGING=true
-      -e PROXY_ICM=true
       -e SENTRY_DSN=${SENTRY_DSN}
       -e TACTON="${TACTON}"
       -e ICM_BASE_URL=${ICM_BASE_URL}
+      -e ICM_IDENTITY_PROVIDER=Auth0
+      -e IDENTITY_PROVIDERS="{\"Auth0\":{\"type\":\"auth0\",\"domain\":\"dev-9pqwi8uh.eu.auth0.com\",\"clientID\":\"V2xvLUo3YSfGdCmJz7u381dSevoVkOso\"}}"
       --add-host $ICM_HOST:$ICM_IP
       --add-host b2b.$CI_COMMIT_REF_SLUG.$DEMO_SERVER_NAME:$DEMO_SERVER_IP
       --add-host b2c.$CI_COMMIT_REF_SLUG.$DEMO_SERVER_NAME:$DEMO_SERVER_IP
@@ -429,7 +430,7 @@ deploy_review_b2b:
   script:
     - set -x
     - DEMO_SERVER_IP=$(dig ${DNS_SERVER} +short $DEMO_SERVER_NAME)
-    - export ICM_BASE_URL=$(sh e2e/get-icmbaseurl.sh)
+    - export ICM_BASE_URL=https://jpwademo.rnd.j.ad.intershop.net
     - ICM_HOST=$(expr match "$ICM_BASE_URL" '.*://\([^:]*\).*')
     - ICM_IP=$(dig ${DNS_SERVER} +short $ICM_HOST | tail -n 1)
     - PUBLISH_PWA=$(sh .gitlab-ci-get-publish.sh "${CI_COMMIT_REF_SLUG}-pwa-b2b")
@@ -441,10 +442,11 @@ deploy_review_b2b:
       $PUBLISH_PWA
       --name "${CI_COMMIT_REF_SLUG}-pwa-b2b"
       -e LOGGING=true
-      -e PROXY_ICM=true
       -e SENTRY_DSN=${SENTRY_DSN}
       -e TACTON="${TACTON}"
       -e ICM_BASE_URL=${ICM_BASE_URL}
+      -e ICM_IDENTITY_PROVIDER=Auth0
+      -e IDENTITY_PROVIDERS="{\"Auth0\":{\"type\":\"auth0\",\"domain\":\"dev-9pqwi8uh.eu.auth0.com\",\"clientID\":\"V2xvLUo3YSfGdCmJz7u381dSevoVkOso\"}}"
       -e THEME="blue|688dc3"
       -e ICM_CHANNEL=inSPIRED-inTRONICS_Business-Site
       -e FEATURES=quoting,quickorder,orderTemplates,recently,compare,businessCustomerRegistration,advancedVariationHandling,sentry,tacton,punchout
