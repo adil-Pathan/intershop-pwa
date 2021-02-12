@@ -34,6 +34,24 @@ export class PunchoutService {
     return punchoutType === 'oci' ? 'oci5' : 'cxml1.2';
   }
 
+  /**
+   * Gets all supported punchout formats (oci, cxml).
+   * @returns    An array of punchout types.
+   */
+  getPunchoutTypes(): Observable<PunchoutType[]> {
+    return this.currentCustomer$.pipe(
+      switchMap(customer =>
+        this.apiService.get(`customers/${customer.customerNo}/punchouts`, { headers: this.punchoutHeaders }).pipe(
+          unpackEnvelope<Link>(),
+          this.apiService.resolveLinks<{ punchoutType: PunchoutType; version: string }>({
+            headers: this.punchoutHeaders,
+          }),
+          map(types => types?.map(type => type.punchoutType))
+        )
+      )
+    );
+  }
+
   // PUNCHOUT USER MANAGEMENT
 
   /** Gets the list of punchout users.

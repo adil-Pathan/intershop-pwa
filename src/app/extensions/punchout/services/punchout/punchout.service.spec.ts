@@ -46,21 +46,19 @@ describe('Punchout Service', () => {
     expect(punchoutService).toBeTruthy();
   });
 
+  it('should call the getPunchouts when fetching punchout types', done => {
+    punchoutService.getPunchoutTypes().subscribe(() => {
+      verify(apiServiceMock.get(anything(), anything())).once();
+      expect(capture(apiServiceMock.get).last()).toContain(`customers/4711/punchouts`);
+      done();
+    });
+  });
+
   it('should call the getUsers when fetching punchout users', done => {
+
     punchoutService.getUsers().subscribe(() => {
       verify(apiServiceMock.get(anything(), anything())).once();
-      expect(capture(apiServiceMock.get).last()).toMatchInlineSnapshot(`
-        Array [
-          "customers/4711/punchouts/oci5/users",
-          Object {
-            "headers": HttpHeaders {
-              "lazyInit": [Function],
-              "lazyUpdate": null,
-              "normalizedNames": Map {},
-            },
-          },
-        ]
-      `);
+      expect(capture(apiServiceMock.get).last()).toContain(`customers/4711/punchouts/oci5/users`);
       done();
     });
   });

@@ -13,6 +13,7 @@ import { PunchoutUser } from '../../models/punchout-user/punchout-user.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountPunchoutPageComponent implements OnInit {
+  punchoutTypes$: Observable<string[]>;
   punchoutUsers$: Observable<PunchoutUser[]>;
   loading$: Observable<boolean>;
   error$: Observable<HttpError>;
@@ -25,8 +26,9 @@ export class AccountPunchoutPageComponent implements OnInit {
     this.punchoutUsers$ = this.punchoutFacade
       .punchoutUsers$()
       .pipe(map(users => users.sort((u1, u2) => (u1.login > u2.login ? 1 : -1))));
+    this.punchoutTypes$ = this.punchoutFacade.punchoutTypes$();
     this.loading$ = this.punchoutFacade.punchoutLoading$;
-    this.error$ = this.punchoutFacade.punchoutError$;
+    this.error$ = this.punchoutFacade.punchoutError$ || this.punchoutFacade.punchoutTypesError$;
   }
 
   deleteUser(user: PunchoutUser) {
