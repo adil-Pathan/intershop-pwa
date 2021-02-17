@@ -6,6 +6,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { instance, mock, verify, when } from 'ts-mockito';
 
 import { makeHttpError } from 'ish-core/utils/dev/api-service-utils';
+import { routerTestNavigatedAction } from 'ish-core/utils/dev/routing';
 
 import { PunchoutService } from '../../services/punchout/punchout.service';
 
@@ -29,6 +30,21 @@ describe('Punchout Types Effects', () => {
     });
 
     effects = TestBed.inject(PunchoutTypesEffects);
+  });
+
+  describe('loadPunchoutTypesInitially$', () => {
+    it('should trigger loadPunchoutTypes action if account/punchout page is called', done => {
+      actions$ = of(
+        routerTestNavigatedAction({
+          routerState: { url: '/account/punchout', queryParams: { format: 'oci' } },
+        })
+      );
+
+      effects.loadPunchoutTypesInitially$.subscribe(action => {
+        expect(action).toMatchInlineSnapshot(`[Punchout] Load Punchout Types`);
+        done();
+      });
+    });
   });
 
   describe('loadPunchoutType$', () => {

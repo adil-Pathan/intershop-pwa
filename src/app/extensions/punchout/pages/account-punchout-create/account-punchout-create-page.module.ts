@@ -10,8 +10,8 @@ const accountPunchoutCreatePageRoutes: Routes = [
     path: '',
     data: {
       breadcrumbData: [
-        { key: 'account.punchout.link', link: '/account/punchout' },
-        { key: 'account.punchout.oci.create.link' },
+        { key: 'account.punchout.link', link: '../account/punchout' },
+        { key: 'account.punchout.create.link' },
       ],
     },
     component: AccountPunchoutCreatePageComponent,

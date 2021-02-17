@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { HttpError } from 'ish-core/models/http-error/http-error.model';
 
 import { PunchoutFacade } from '../../facades/punchout.facade';
-import { PunchoutUser } from '../../models/punchout-user/punchout-user.model';
+import { PunchoutType, PunchoutUser } from '../../models/punchout-user/punchout-user.model';
 
 @Component({
   selector: 'ish-account-punchout-page',
@@ -13,25 +14,33 @@ import { PunchoutUser } from '../../models/punchout-user/punchout-user.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountPunchoutPageComponent implements OnInit {
-  punchoutTypes$: Observable<string[]>;
+  punchoutTypes$: Observable<PunchoutType[]>;
   punchoutUsers$: Observable<PunchoutUser[]>;
+  selectedPunchoutType$: Observable<PunchoutType>;
   loading$: Observable<boolean>;
   error$: Observable<HttpError>;
 
+  punchoutTypeText: string;
+
   punchoutUrl = `${window.location.origin}/punchout?USERNAME=<USERNAME>&PASSWORD=<PASSWORD>&HOOK_URL=<HOOK_URL>`;
 
-  constructor(private punchoutFacade: PunchoutFacade) {}
+  constructor(private punchoutFacade: PunchoutFacade, private translateService: TranslateService) {}
 
   ngOnInit() {
     this.punchoutUsers$ = this.punchoutFacade
-      .punchoutUsers$()
+      .punchoutUsersByRoute$()
       .pipe(map(users => users.sort((u1, u2) => (u1.login > u2.login ? 1 : -1))));
-    this.punchoutTypes$ = this.punchoutFacade.punchoutTypes$();
+    this.punchoutTypes$ = this.punchoutFacade.supportedPunchoutTypes$;
+    this.selectedPunchoutType$ = this.punchoutFacade.selectedPunchoutType$;
     this.loading$ = this.punchoutFacade.punchoutLoading$;
     this.error$ = this.punchoutFacade.punchoutError$ || this.punchoutFacade.punchoutTypesError$;
   }
 
+  getPunchoutTypeText(punchoutType: PunchoutType): string {
+    return (this.punchoutTypeText = this.translateService.instant(`account.punchout.${punchoutType}.text`));
+  }
+
   deleteUser(user: PunchoutUser) {
-    this.punchoutFacade.deletePunchoutUser(user.login);
+    this.punchoutFacade.deletePunchoutUser(user);
   }
 }

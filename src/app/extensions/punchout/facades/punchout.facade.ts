@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 
-import { PunchoutUser } from '../models/punchout-user/punchout-user.model';
+import { selectRouteParam } from 'ish-core/store/core/router';
+import { whenTruthy } from 'ish-core/utils/operators';
+
+import { PunchoutType, PunchoutUser } from '../models/punchout-user/punchout-user.model';
 import { transferPunchoutBasket } from '../store/punchout-functions';
-import {
-  getPunchoutTypes,
-  getPunchoutTypesError,
-  getPunchoutTypesLoading,
-  loadPunchoutTypes,
-} from '../store/punchout-types';
+import { getPunchoutTypes, getPunchoutTypesError, getPunchoutTypesLoading } from '../store/punchout-types';
 import {
   addPunchoutUser,
   deletePunchoutUser,
@@ -18,7 +16,6 @@ import {
   getPunchoutLoading,
   getPunchoutUsers,
   getSelectedPunchoutUser,
-  loadPunchoutUsers,
   updatePunchoutUser,
 } from '../store/punchout-users';
 
@@ -35,15 +32,24 @@ export class PunchoutFacade {
   punchoutError$ = this.store.pipe(select(getPunchoutError));
   punchoutTypesError$ = this.store.pipe(select(getPunchoutTypesError));
 
-  punchoutTypes$() {
-    this.store.dispatch(loadPunchoutTypes());
-    return this.store.pipe(select(getPunchoutTypes));
+  supportedPunchoutTypes$ = this.store.pipe(select(getPunchoutTypes));
+
+  selectedPunchoutType$ = combineLatest([
+    this.store.pipe(select(selectRouteParam('format'))),
+    this.store.pipe(select(getPunchoutTypes)),
+  ]).pipe(
+    filter(([format, types]) => !!format || types?.length > 0),
+    map(([format, types]) => (format as PunchoutType) || types[0]),
+    distinctUntilChanged()
+  );
+
+  punchoutUsersByRoute$() {
+    return this.selectedPunchoutType$.pipe(
+      whenTruthy(),
+      switchMap(type => this.store.pipe(select(getPunchoutUsers(type))))
+    );
   }
 
-  punchoutUsers$() {
-    this.store.dispatch(loadPunchoutUsers());
-    return this.store.pipe(select(getPunchoutUsers));
-  }
   selectedPunchoutUser$ = this.store.pipe(select(getSelectedPunchoutUser));
 
   addPunchoutUser(user: PunchoutUser) {
@@ -54,8 +60,8 @@ export class PunchoutFacade {
     this.store.dispatch(updatePunchoutUser({ user }));
   }
 
-  deletePunchoutUser(login: string) {
-    this.store.dispatch(deletePunchoutUser({ login }));
+  deletePunchoutUser(user: PunchoutUser) {
+    this.store.dispatch(deletePunchoutUser({ user }));
   }
 
   transferBasket() {

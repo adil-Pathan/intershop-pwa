@@ -6,13 +6,13 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { anyString, instance, mock, verify, when } from 'ts-mockito';
 
-import { ErrorMessageComponent } from 'ish-shared/components/common/error-message/error-message.component';
 import { LoadingComponent } from 'ish-shared/components/common/loading/loading.component';
 import { ModalDialogComponent } from 'ish-shared/components/common/modal-dialog/modal-dialog.component';
 
 import { PunchoutFacade } from '../../facades/punchout.facade';
 import { PunchoutUser } from '../../models/punchout-user/punchout-user.model';
 
+import { AccountPunchoutHeaderComponent } from './account-punchout-header/account-punchout-header.component';
 import { AccountPunchoutPageComponent } from './account-punchout-page.component';
 
 describe('Account Punchout Page Component', () => {
@@ -33,7 +33,7 @@ describe('Account Punchout Page Component', () => {
       imports: [RouterTestingModule, TranslateModule.forRoot()],
       declarations: [
         AccountPunchoutPageComponent,
-        MockComponent(ErrorMessageComponent),
+        MockComponent(AccountPunchoutHeaderComponent),
         MockComponent(FaIconComponent),
         MockComponent(LoadingComponent),
         MockComponent(ModalDialogComponent),
@@ -47,7 +47,8 @@ describe('Account Punchout Page Component', () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
 
-    when(punchoutFacade.punchoutUsers$()).thenReturn(of(users));
+    when(punchoutFacade.punchoutUsersByRoute$()).thenReturn(of(users));
+    when(punchoutFacade.selectedPunchoutType$).thenReturn(of('oci'));
   });
 
   it('should be created', () => {
@@ -67,6 +68,8 @@ describe('Account Punchout Page Component', () => {
 
     expect(element.querySelector('[data-testing-id="user-list"]')).toBeTruthy();
     expect(element.querySelector('[data-testing-id="user-list"]').innerHTML).toContain('punchout1@test.intershop.de');
+
+    expect(element.querySelector('[data-testing-id="empty-user-list"]')).toBeFalsy();
   });
 
   it('should call deletePunchoutUser at punchout facade  when deleteUser is triggered', () => {
@@ -74,6 +77,13 @@ describe('Account Punchout Page Component', () => {
 
     component.deleteUser(users[0]);
 
-    verify(punchoutFacade.deletePunchoutUser(users[0].login)).once();
+    verify(punchoutFacade.deletePunchoutUser(users[0])).once();
+  });
+
+  it('should display the empty list message if there is no user', () => {
+    when(punchoutFacade.punchoutUsersByRoute$()).thenReturn(of([]));
+
+    fixture.detectChanges();
+    expect(element.querySelector('[data-testing-id="empty-user-list"]')).toBeTruthy();
   });
 });
