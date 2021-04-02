@@ -27,7 +27,7 @@ If the PWA is built using `production` configuration. (Either by building with `
 - Webpack [SplitChunksPlugin](https://webpack.js.org/plugins/split-chunks-plugin/) is instructed to produce only `main`, `vendor`, `polyfills` and one `common` bundle for the code for optimized compression and download of the application.
 - All `data-testing` attributes are removed from the HTML templates to reduce output.
 - [PurgeCSS](https://purgecss.com) is used to remove unused CSS classes from the CSS output.
-  [Configuration](https://purgecss.com/configuration.html), especially [safelisting](https://purgecss.com/safelisting.html) certain classes, can be done on the plugin configuration or directly in your CSS with a special comment.
+  [Configuration](https://purgecss.com/configuration.html), especially [whitelisting](https://purgecss.com/safelisting.html) certain classes, can be done on the plugin configuration or directly in your CSS with a special comment.
 
 # Further References
 

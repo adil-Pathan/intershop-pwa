@@ -30,7 +30,7 @@ For an overview of the ever-growing list of third party integrations relating to
 ## PWA - Nginx
 
 As a first point of contact for any browser requests directed at a default deployment, the custom [_nginx_](https://www.nginx.com/) reverse proxy webserver serves a number of functions.
-Each of these is seperately configurable (see [Building and Running nginx Docker Image](../guides/nginx-startup.md)).
+Each of these is separately configurable (see [Building and Running nginx Docker Image](../guides/nginx-startup.md)).
 Nginx enables the following features to be used in an Intershop PWA deployment:
 
 - Uncomplicated caching of PWA server-side rendering responses provided by the upstream Angular Universal server.
@@ -50,7 +50,7 @@ For more information on the browser's role in rendering the Intershop PWA, see [
 # Default Production Deployment
 
 Chaining the building blocks together results in the depicted system.
-Read on for a step-by-step walkthrough of the initial connection request.
+Read on for a step-by-step walk-through of the initial connection request.
 
 ![Current Deployment](pwa-building-blocks-production-deployment.svg)
 
