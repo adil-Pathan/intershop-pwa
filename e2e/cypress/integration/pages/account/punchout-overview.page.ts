@@ -8,6 +8,14 @@ export class PunchoutOverviewPage {
   readonly header = new HeaderModule();
   readonly breadcrumb = new BreadcrumbModule();
 
+  get page() {
+    return cy.get(this.tag);
+  }
+
+  get headerNavigation() {
+    return cy.get('ish-account-punchout-header').find('ul.nav-tabs');
+  }
+
   get userList() {
     return cy.get('div[data-testing-id="user-list"]');
   }
@@ -20,6 +28,14 @@ export class PunchoutOverviewPage {
     return {
       message: cy.get('#toast-container').find('.toast-message'),
     };
+  }
+
+  selectcXMLTab() {
+    this.headerNavigation.find('li:first-child a').click();
+  }
+
+  selectOciTab() {
+    this.headerNavigation.find('li:last-child a').click();
   }
 
   addUser() {
