@@ -22,9 +22,10 @@ export interface Environment {
   // array of REST path expressions that should always be mocked
   apiMockPaths?: string[];
 
-  /* FEATURE TOOGLES */
+  /* FEATURE TOGGLES */
   features: (
     | 'compare'
+    | 'guestCheckout'
     | 'rating'
     | 'recently'
     /* B2B features */
@@ -105,7 +106,7 @@ export const ENVIRONMENT_DEFAULTS: Environment = {
   identityProvider: 'ICM',
 
   /* FEATURE TOOGLES */
-  features: ['compare', 'recently', 'rating', 'wishlists'],
+  features: ['compare', 'guestCheckout', 'recently', 'rating', 'wishlists'],
 
   /* PROGRESSIVE WEB APP CONFIGURATIONS */
   smallBreakpointWidth: 576,

@@ -47,6 +47,7 @@ export const environment: Environment = {
 
   features: [
     'compare',
+    'guestCheckout',
     'recently',
     'rating',
     ...extraFeatures
