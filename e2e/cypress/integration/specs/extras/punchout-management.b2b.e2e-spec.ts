@@ -83,7 +83,7 @@ describe('Punchout MyAccount Functionality', () => {
   it('admin user deletes a punchout user', () => {
     at(PunchoutOverviewPage, page => {
       page.selectcXMLTab();
-      cy.wait(1000);
+      cy.wait(2000);
       page.deleteUser(_.punchoutUser.login);
       page.userList.should('not.exist');
       page.emptyList.should('be.visible');
